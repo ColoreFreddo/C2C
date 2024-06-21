@@ -27,11 +27,11 @@ def main():
     while True:
       message = input("")
       if message:
-        client_socket.sendall(message.encode('utf-8'))
+        client_socket.sendall(bytes(message, "utf-8"))
       else:
         break
     
-      data = client_socket.recv(1024).decode('utf-8')
+      data = bytes(client_socket.recv(1024))
       if data:
         print(f"Received: {data}")
       else:
