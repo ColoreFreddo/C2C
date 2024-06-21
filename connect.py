@@ -24,3 +24,5 @@ def get_remote_info():
       break
 
   client_socket.close()
+
+get_remote_info()
