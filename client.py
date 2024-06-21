@@ -15,4 +15,4 @@ def Fmenu():
     buttonDec = Button(Fmenu,text='Decode', bg='blue',fg='white', width=20, command=Fdecode)
     buttonDec.place(relx=0.8,rely = 0.8,anchor='center')
     buttonExit = Button(text='Exit', bg='black',fg='white', width=15, command=exit)
-    buttonExit.place(relx=0.5,rely=0.9,anchor='center')
+    buttonExit.place(relx=0.5,rely=0.9,anchor='center') #a
