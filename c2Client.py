@@ -27,11 +27,37 @@ except Exception as e:
 socket_client.close()
 print("Connessione chiusa")"""
 
+def start_server(self, host, port):
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.bind((host, port))
+        server.listen(5)
+        print(f"Server listening on {host}:{port}")
+        
+        while True:
+            conn, addr = server.accept()
+            print(f"Connected by {addr}")
+            data = conn.recv(1024)
+            if data:
+                print(f"Received message: {data.decode()}")
+                conn.sendall(f"Echo: {data.decode()}".encode())
+            conn.close()
+
+
 def __main__():
     port = 6969
     message = "Hello Clown!"
-
+    
     c2c = C2C()
     local_ip, gateway, network,broadcast = c2c.get_local_ip_and_network()
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((host, port))   
+    server.listen(5)
+    print(f"Server listening on {host}:{port}")
+    conn, addr = server.accept()
+    print(f"Connected by {addr}")
+    """data = conn.recv(1024)
+    if data:
+        print(f"Received message: {data.decode()}")
+        conn.sendall(f"Echo: {data.decode()}".encode())"""
     # reachable_endpoints = c2c.clowns_scan(port)
     c2c.send_message("POPI",broadcast)
