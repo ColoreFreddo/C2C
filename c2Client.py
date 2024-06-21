@@ -49,15 +49,25 @@ def __main__():
     
     c2c = C2C()
     local_ip, gateway, network,broadcast = c2c.get_local_ip_and_network()
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((host, port))   
-    server.listen(5)
-    print(f"Server listening on {host}:{port}")
-    conn, addr = server.accept()
+    menu()
+
+def menu():
+    print("Benvenuto")
+    y = input("Vuoi iniziare una conversazione?(y/n)")
+    if(y.lower() == "y"):
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.bind((host, port))
+        server.listen(5)
+        print(f"Server in ascolto su {host}:{port}")
+    else:
+        print("Sei un vero clown!")
+        exit()
+    """conn, addr = server.accept()
     print(f"Connected by {addr}")
-    """data = conn.recv(1024)
+    data = conn.recv(1024)
     if data:
         print(f"Received message: {data.decode()}")
         conn.sendall(f"Echo: {data.decode()}".encode())"""
     # reachable_endpoints = c2c.clowns_scan(port)
     c2c.send_message("POPI",broadcast)
+    

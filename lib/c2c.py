@@ -49,8 +49,7 @@ class C2C:
         broadcast = network.broadcast_address
         return local_ip, gateway, network, broadcast
 
-    def clowns_scan(self, port):
-        
+    def clowns_scan(self, port):        
         reachable_endpoints = []
         for ip in network.hosts():
                 endpoint = Endpoint(str(ip), port, f'{ip}:{port}')
