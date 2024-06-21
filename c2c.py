@@ -26,4 +26,4 @@ except Exception as e:
 # Chiusura della connessione
 socket_client.close()
 print("Connessione chiusa")
-
+print("Ciao")
