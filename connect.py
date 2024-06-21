@@ -3,7 +3,6 @@ import socket
 def get_remote_info():
   HOST = input("Enter remote peer's IP address: ")
   PORT = int(input("Enter remote peer's port: "))
-  HOST, PORT = get_remote_info()
   client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   client_socket.connect((HOST, PORT))
 
