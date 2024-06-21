@@ -54,7 +54,6 @@ def main():
     host = "172.20.10.2"  # Replace with Client 2's IP address
     send_port = 6969
     receive_port = 9696
-    
     client = Client(host, send_port, receive_port)
     client.start()
 
