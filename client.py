@@ -1,7 +1,7 @@
 import socket
 
 HOST = 'localhost'  # The server's hostname or IP address
-PORT = 5000        # The port used by the server
+PORT = 9696        # The port used by the server
 
 def main():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
