@@ -36,7 +36,7 @@ class Client:
                 break
 
 def main():
-    host = "192.168.19.32"  # Replace with Client 2's IP address
+    host = "192.168.19."  # Replace with Client 2's IP address
     port = 6969
     
     client = Client(host, port)
