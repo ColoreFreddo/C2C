@@ -2,51 +2,60 @@ import socket
 import threading
 
 class Client:
-    def __init__(self, host, port):
+    def __init__(self, host, send_port, receive_port):
         self.host = host
-        self.port = port
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.send_port = send_port
+        self.receive_port = receive_port
+        self.send_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.receive_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def start(self):
         try:
-            self.client_socket.connect((self.host, self.port))
-            print(f"Connected to {self.host}:{self.port}")
+            # Connect to Client 2's receive port for sending messages
+            self.send_socket.connect((self.host, self.receive_port))
+            print(f"Connected to {self.host} on send port {self.receive_port}")
 
-            # Start a thread to receive messages from the server
+            # Connect to Client 2's send port for receiving messages
+            self.receive_socket.connect((self.host, self.send_port))
+            print(f"Connected to {self.host} on receive port {self.send_port}")
+
+            # Start thread to receive messages
             threading.Thread(target=self.receive_messages).start()
 
             # Main loop to send messages
             while True:
-                message = input("Enter your message (type 'exit' to quit): ")
+                message = input("Client 1 (Send): ")
                 if message.lower() == 'exit':
                     break
-                self.client_socket.sendall(message.encode())
+                self.send_socket.sendall(message.encode())
 
         except ConnectionRefusedError:
-            print(f"Connection to {self.host}:{self.port} refused.")
+            print(f"Connection to {self.host} refused.")
         except Exception as e:
             print(f"Error: {e}")
 
         finally:
-            self.client_socket.close()
-            print("Connection closed.")
+            self.send_socket.close()
+            self.receive_socket.close()
+            print("Connections closed.")
 
     def receive_messages(self):
         while True:
             try:
-                data = self.client_socket.recv(1024)
+                data = self.receive_socket.recv(1024)
                 if not data:
                     break
-                print(f"Received: {data.decode()}")
+                print(f"Client 1 (Receive): {data.decode()}")
             except Exception as e:
                 print(f"Error receiving message: {e}")
                 break
 
 def main():
-    host = "192.168.19.32"  # Replace with the server's IP address
-    port = 6969
+    host = "172.20.10.2"  # Replace with Client 2's IP address
+    send_port = 6969
+    receive_port = 9696
     
-    client = Client(host, port)
+    client = Client(host, send_port, receive_port)
     client.start()
 
 if __name__ == "__main__":
