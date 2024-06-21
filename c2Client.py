@@ -1,4 +1,4 @@
-import socket
+"""import socket
 
 # Indirizzo IP di destinazione
 indirizzo_ip = "192.168.19.32"
@@ -25,5 +25,13 @@ except Exception as e:
 
 # Chiusura della connessione
 socket_client.close()
-print("Connessione chiusa")
+print("Connessione chiusa")"""
 
+def __main__():
+    port = 6969
+    message = "Hello Clown!"
+
+    c2c = C2C()
+    local_ip, gateway, network,broadcast = c2c.get_local_ip_and_network()
+    # reachable_endpoints = c2c.clowns_scan(port)
+    c2c.send_message("POPI",broadcast)

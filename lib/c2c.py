@@ -3,7 +3,7 @@ import netifaces
 import ipaddress
 
 class C2C:
-    def __init__(self, endpoints):
+    def __init__(self, endpoints=None):
         self.endpoints = endpoints if endpoints else []
 
     def send_message(self, message, dest_endpoint):
@@ -20,7 +20,6 @@ class C2C:
     def popi(self, endpoint):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.settimeout(4)
                 s.connect((endpoint.ip, endpoint.port))
                 print(f"POPI POPI {endpoint.name}")
                 return True
@@ -47,14 +46,13 @@ class C2C:
 
         # Create an IP network object
         network = ipaddress.IPv4Network(f"{local_ip}/{netmask}", strict=False)
-        return local_ip, gateway, network
+        broadcast = network.broadcast_address
+        return local_ip, gateway, network, broadcast
 
-    def clowns_scan(self, port_range):
-        local_ip, gateway, network = self.get_local_ip_and_network()
+    def clowns_scan(self, port):
         
         reachable_endpoints = []
         for ip in network.hosts():
-            for port in port_range:
                 endpoint = Endpoint(str(ip), port, f'{ip}:{port}')
                 if self.popi(endpoint):
                     reachable_endpoints.append(endpoint)
@@ -71,10 +69,3 @@ class Endpoint:
         self.ip = ip
         self.port = port
         self.name = name
-
-port_range = range(6969, 6996)
-message = "Hello Clown!"
-
-c2c = C2C()
-reachable_endpoints = c2c.clowns_scan(port_range)
-c2c.send_to_clowns(message, reachable_endpoints)
