@@ -3,9 +3,19 @@ import ed25519
 
 def generate_keys():
 
-    folder_path = "./Keys"
+    folder_name = "Keys"
 
-    os.makedirs(folder_path, exist_ok=True)
+    current_dir = os.getcwd()
+
+    folder_path = os.path.join(current_dir, folder_name)
+
+    try:
+        os.makedirs(folder_path)
+    except OSError as e:
+        if not os.path.isdir(folder_path):
+            raise  # Re-raise if it's not a directory permission issue
+        else:
+            print(f"Folder '{folder_name}' already exists. Keys will be saved there.")
 
     seed = os.urandom(32)
 
