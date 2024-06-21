@@ -13,3 +13,10 @@
 9. Eliminazione della chiave
 
 10. ENJOY
+
+# METODI
+
+* Popi = richiesta di connessione
+* Popipopi = connessione accettata
+* Nac = connessione rifiutata
+* OOC = client non esiste
