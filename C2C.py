@@ -38,7 +38,7 @@ def exchange_keys(sock, recv_first, send_ip, send_port):
     print("Key exchange complete. Encrypted communication started.")
 
 # Function to handle port exchange
-def exchange_ports(sock, recv_first):
+def exchange_ports(sock, recv_first, peer_ip):
     if recv_first:
         # Receive peer's dynamic port
         peer_port, _ = sock.recvfrom(1024)
@@ -57,13 +57,13 @@ def exchange_ports(sock, recv_first):
     return dynamic_port, peer_port
 
 # Function to receive messages
-def receive_message():
+def receive_message(peer_ip):
     # Handshake socket
     recv_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     recv_socket.bind((handshake_ip, handshake_port))
 
     # Perform port exchange
-    dynamic_port, peer_port = exchange_ports(recv_socket, recv_first=True)
+    dynamic_port, peer_port = exchange_ports(recv_socket, recv_first=True, peer_ip=peer_ip)
     recv_socket.close()
 
     # Create new socket with dynamic port
@@ -87,12 +87,12 @@ def receive_message():
             break
 
 # Function to send messages
-def send_message(user_name):
+def send_message(user_name, peer_ip):
     # Handshake socket
     send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     # Perform port exchange
-    dynamic_port, peer_port = exchange_ports(send_socket, recv_first=False)
+    dynamic_port, peer_port = exchange_ports(send_socket, recv_first=False, peer_ip=peer_ip)
 
     # Create new socket with dynamic port
     send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -114,15 +114,13 @@ def send_message(user_name):
             print(f"Error sending message: {e}")
             break
 
-# Configuration for the peer
-peer_ip = 'peer_ip'  # Change to the peer's IP address
-
-# Get user name
+# Get user input for configuration
 user_name = input("Enter your chat name: ")
+peer_ip = input("Enter the peer's IP address: ")
 
 # Create threads for sending and receiving
-recv_thread = threading.Thread(target=receive_message)
-send_thread = threading.Thread(target=send_message, args=(user_name,))
+recv_thread = threading.Thread(target=receive_message, args=(peer_ip,))
+send_thread = threading.Thread(target=send_message, args=(user_name, peer_ip))
 
 recv_thread.start()
 send_thread.start()
