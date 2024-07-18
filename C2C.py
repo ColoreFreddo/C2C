@@ -56,6 +56,48 @@ def exchange_ports(sock, recv_first, peer_ip):
 
     return dynamic_port, peer_port
 
+# Function to handle connection request
+def handle_connection_request(sock, peer_ip):
+    try:
+        # Send connection request
+        sock.sendto(b"Popi", (peer_ip, handshake_port))
+        sock.settimeout(5)  # Set a timeout for the response
+
+        # Wait for response
+        response, _ = sock.recvfrom(1024)
+        if response == b"Popipopi":
+            print("Connection accepted by peer.")
+            return True
+        elif response == b"Nac":
+            print("Connection refused by peer.")
+            return False
+        else:
+            print("Unexpected response.")
+            return False
+    except socket.timeout:
+        print("OOC: Client does not exist or did not respond.")
+        return False
+
+# Function to receive connection request
+def receive_connection_request(sock):
+    while not terminate.is_set():
+        try:
+            # Wait for connection request
+            message, addr = sock.recvfrom(1024)
+            if message == b"Popi":
+                print(f"Connection request received from {addr[0]}")
+                response = input("Do you want to accept the connection? (yes/no): ")
+                if response.lower() == "yes":
+                    sock.sendto(b"Popipopi", addr)
+                    return addr[0]
+                else:
+                    sock.sendto(b"Nac", addr)
+            else:
+                print("Unexpected message received.")
+        except Exception as e:
+            print(f"Error receiving connection request: {e}")
+            break
+
 # Function to receive messages
 def receive_message(peer_ip):
     # Handshake socket
@@ -91,6 +133,10 @@ def send_message(user_name, peer_ip):
     # Handshake socket
     send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+    # Perform connection request
+    if not handle_connection_request(send_socket, peer_ip):
+        return
+
     # Perform port exchange
     dynamic_port, peer_port = exchange_ports(send_socket, recv_first=False, peer_ip=peer_ip)
 
@@ -116,17 +162,35 @@ def send_message(user_name, peer_ip):
 
 # Get user input for configuration
 user_name = input("Enter your chat name: ")
-peer_ip = input("Enter the peer's IP address: ")
+mode = input("Do you want to initiate a connection or wait for a request? (initiate/wait): ")
 
-# Create threads for sending and receiving
-recv_thread = threading.Thread(target=receive_message, args=(peer_ip,))
-send_thread = threading.Thread(target=send_message, args=(user_name, peer_ip))
+if mode.lower() == "initiate":
+    peer_ip = input("Enter the peer's IP address: ")
+    # Create threads for sending and receiving
+    recv_thread = threading.Thread(target=receive_message, args=(peer_ip,))
+    send_thread = threading.Thread(target=send_message, args=(user_name, peer_ip))
 
-recv_thread.start()
-send_thread.start()
+    recv_thread.start()
+    send_thread.start()
 
-recv_thread.join()
-send_thread.join()
+    recv_thread.join()
+    send_thread.join()
+else:
+    # Wait for a connection request
+    recv_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    recv_socket.bind((handshake_ip, handshake_port))
+
+    peer_ip = receive_connection_request(recv_socket)
+    if peer_ip:
+        # Create threads for sending and receiving
+        recv_thread = threading.Thread(target=receive_message, args=(peer_ip,))
+        send_thread = threading.Thread(target=send_message, args=(user_name, peer_ip))
+
+        recv_thread.start()
+        send_thread.start()
+
+        recv_thread.join()
+        send_thread.join()
 
 # Destroy keys
 del private_key
