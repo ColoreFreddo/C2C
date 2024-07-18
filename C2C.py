@@ -4,7 +4,7 @@ import random
 from nacl.public import PrivateKey, PublicKey, Box
 
 # Fixed handshake port
-handshake_port = 5000
+handshake_port = 6969
 handshake_ip = '0.0.0.0'  # Listen on all available interfaces
 
 # Generate key pairs
