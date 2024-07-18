@@ -5,7 +5,7 @@ from nacl.public import PrivateKey, PublicKey, Box
 
 # Fixed handshake port
 handshake_port = 5000
-handshake_ip = '0.0.0.0'
+handshake_ip = '0.0.0.0'  # Listen on all available interfaces
 
 # Generate key pairs
 private_key = PrivateKey.generate()
